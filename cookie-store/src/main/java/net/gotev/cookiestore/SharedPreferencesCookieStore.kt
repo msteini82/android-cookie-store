@@ -3,7 +3,6 @@ package net.gotev.cookiestore
 import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import java.net.HttpCookie
 import java.net.URI
@@ -14,15 +13,14 @@ open class SharedPreferencesCookieStore(
 ) : InMemoryCookieStore(name) {
 
     private val preferences = context.getSharedPreferences(name, Context.MODE_PRIVATE)
-    private val gson = GsonBuilder().setLenient().create()
+    private val gson = Gson()
+    private val listType = object : TypeToken<ArrayList<HttpCookie>>() {}.type
 
     init {
         synchronized(SharedPreferencesCookieStore::class.java) {
             preferences.all.forEach { (key, value) ->
                 try {
                     val index = URI.create(key)
-                    val listType = object : TypeToken<ArrayList<HttpCookie>>() {}.type
-
                     val cookies: ArrayList<HttpCookie> = gson.fromJson(value.toString(), listType)
 
                     uriIndex[index] = cookies
@@ -52,7 +50,7 @@ open class SharedPreferencesCookieStore(
                 uriIndex[index]?.let { cookies ->
                     preferences
                         .edit()
-                        .putString(index.toString(), gson.toJson(ArrayList(cookies)))
+                        .putString(index.toString(), gson.toJson(ArrayList(cookies), listType))
                         .commit()
                 }
             }
@@ -71,7 +69,7 @@ open class SharedPreferencesCookieStore(
                     if (cookies == null) {
                         remove(index.toString())
                     } else {
-                        putString(index.toString(), gson.toJson(ArrayList(cookies)))
+                        putString(index.toString(), gson.toJson(ArrayList(cookies), listType))
                     }
                 }.commit()
             }
