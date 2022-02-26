@@ -3,6 +3,7 @@ package net.gotev.cookiestore
 import android.content.Context
 import android.util.Log
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 import java.net.HttpCookie
 import java.net.URI
@@ -13,7 +14,7 @@ open class SharedPreferencesCookieStore(
 ) : InMemoryCookieStore(name) {
 
     private val preferences = context.getSharedPreferences(name, Context.MODE_PRIVATE)
-    private val gson = Gson()
+    private val gson = GsonBuilder().serializeNulls().create()
 
     init {
         synchronized(SharedPreferencesCookieStore::class.java) {
