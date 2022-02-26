@@ -14,7 +14,7 @@ open class SharedPreferencesCookieStore(
 ) : InMemoryCookieStore(name) {
 
     private val preferences = context.getSharedPreferences(name, Context.MODE_PRIVATE)
-    private val gson = GsonBuilder().serializeNulls().create()
+    private val gson = GsonBuilder().setLenient().create()
 
     init {
         synchronized(SharedPreferencesCookieStore::class.java) {
