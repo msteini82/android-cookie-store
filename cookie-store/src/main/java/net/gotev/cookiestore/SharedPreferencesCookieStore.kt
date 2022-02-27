@@ -91,8 +91,9 @@ open class SharedPreferencesCookieStore(
 ) : InMemoryCookieStore(name) {
 
     private val preferences = context.getSharedPreferences(name, Context.MODE_PRIVATE)
-    private val gson = GsonBuilder().registerTypeAdapter(listType, CookieArrayAdapter()).create()
+    
     private val listType = object : TypeToken<ArrayList<HttpCookie>>() {}.type
+    private val gson = GsonBuilder().registerTypeAdapter(listType, HttpCookieArrayAdapter()).create()
 
     init {
         synchronized(SharedPreferencesCookieStore::class.java) {
